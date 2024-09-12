@@ -3,20 +3,25 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//import io.github.resilience4j.retry.annotation.Retry;
+
 import java.time.Duration;
 import redis.clients.jedis.JedisPoolConfig;
+import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 
 @RestController
-public class TestRedisPoolController {
+public class TestRedisPoolRetryController {
 
     private RedisTemplate<String, Object> redisTemplate;
 
-    @GetMapping("/pool")
+    @GetMapping("/retry")
+    //@Retry(name = "sessaoRetry", fallbackMethod = "fallbackSalvarDeletar")
     public String getAccount() {
        
 
@@ -49,14 +54,13 @@ public class TestRedisPoolController {
 
         clientConfig.and().useSsl();
 
+        //RedisStandaloneConfiguration rediConfiguration = new RedisStandaloneConfiguration(cacheHostname, port);
+        //rediConfiguration.setPassword(cachekey);
 
-        RedisStandaloneConfiguration rediConfiguration = new RedisStandaloneConfiguration(cacheHostname, port);
+
+        RedisClusterConfiguration rediConfiguration = new RedisClusterConfiguration();
+        rediConfiguration.addClusterNode(new RedisNode(cacheHostname, port));
         rediConfiguration.setPassword(cachekey);
-
-
-        // RedisClusterConfiguration rediConfiguration = new RedisClusterConfiguration();
-        // rediConfiguration.addClusterNode(new RedisNode(cacheHostname, port));
-        // rediConfiguration.setPassword(cachekey);
 
 
 
@@ -102,4 +106,8 @@ public class TestRedisPoolController {
         
     }
 
+    public void fallbackSalvarDeletar(Exception ex) {
+        System.out.println("erro ao salvar/deletar no redis de revogados:" + ex);
+        return;
+    }
 }
