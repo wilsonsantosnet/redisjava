@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import redis.clients.jedis.JedisPoolConfig;
+
+//import org.springframework.data.redis.connection.RedisClusterConfiguration;
+//import org.springframework.data.redis.connection.RedisNode;
+
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -17,7 +21,7 @@ public class TestRedisPoolController {
     private RedisTemplate<String, Object> redisTemplate;
 
     @GetMapping("/pool")
-    public String getAccount() {
+    public String getPool() {
        
 
 
@@ -29,7 +33,7 @@ public class TestRedisPoolController {
 
 
 
-         //Configurando o pool de conexões
+        // Configurando o pool de conexões
          JedisPoolConfig poolConfig = new JedisPoolConfig();
          poolConfig.setMaxTotal(150); // Número máximo de conexões
          poolConfig.setMaxIdle(20);  // Número máximo de conexões ociosas
@@ -39,7 +43,7 @@ public class TestRedisPoolController {
          
                  
         
-         // Connect to the Azure Cache for Redis over the TLS/SSL port using the key.
+        //Connect to the Azure Cache for Redis over the TLS/SSL port using the key.
         var clientConfig = JedisClientConfiguration.builder()
             .readTimeout(Duration.ofMillis(readTimeout))
             .connectTimeout(Duration.ofMillis(connectTimeout))
@@ -50,8 +54,8 @@ public class TestRedisPoolController {
         clientConfig.and().useSsl();
 
 
-        RedisStandaloneConfiguration rediConfiguration = new RedisStandaloneConfiguration(cacheHostname, port);
-        rediConfiguration.setPassword(cachekey);
+         RedisStandaloneConfiguration rediConfiguration = new RedisStandaloneConfiguration(cacheHostname, port);
+         rediConfiguration.setPassword(cachekey);
 
 
         // RedisClusterConfiguration rediConfiguration = new RedisClusterConfiguration();
@@ -71,33 +75,15 @@ public class TestRedisPoolController {
         redisTemplate.setKeySerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setKeySerializer(new GenericJackson2JsonRedisSerializer());
        
+       
+        redisTemplate.opsForValue().set("mykey", "teste");
 
+        var result = redisTemplate.opsForValue().get("mykey");
 
-        var count=0;
-        while (count <=1000) {
+        System.out.println("result: " + result);
+      
 
-            try {
-
-
-                redisTemplate.opsForValue().set("mykey", "teste");
-
-                var result = redisTemplate.opsForValue().get("mykey");
-
-                System.err.println("result: " + result);
-
-
-                Thread.sleep(1000);
-
-            } catch (Exception e) {
-                System.out.println(e.toString());
-
-
-            }
-            count++;
-            
-        }
-
-        return "ok";
+        return "ok pool";
 
         
     }
