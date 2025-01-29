@@ -1,16 +1,10 @@
 package com.example.demo.config;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
-
 import java.time.Duration;
-
-import org.springframework.data.redis.connection.RedisClusterConfiguration;
-import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -21,8 +15,8 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 public class RedisConfig {
 
 
-    private String _cacheHostname = "...";
-    private String _cachekey = "...";
+    private String _cacheHostname = System.getenv("CACHE_HOSTNAME");
+    private String _cachekey = System.getenv("CACHE_KEY");
     private Integer _port = 6380;
     private Integer _connectTimeout = 150;
     private Integer _readTimeout = 150;
