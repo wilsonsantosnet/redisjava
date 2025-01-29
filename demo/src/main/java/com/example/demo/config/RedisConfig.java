@@ -17,6 +17,7 @@ public class RedisConfig {
 
     private String _cacheHostname = System.getenv("CACHE_HOSTNAME");
     private String _cachekey = System.getenv("CACHE_KEY");
+
     private Integer _port = 6380;
     private Integer _connectTimeout = 150;
     private Integer _readTimeout = 150;
